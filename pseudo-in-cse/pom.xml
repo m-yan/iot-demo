@@ -6,7 +6,7 @@
 	<groupId>org.onem2m</groupId>
 	<artifactId>pseudo-in-cse</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>war</packaging>
+	<packaging>jar</packaging>
 
 	<name>pseudo-in-cse</name>
 	<description>pseudo IN-CSE</description>
