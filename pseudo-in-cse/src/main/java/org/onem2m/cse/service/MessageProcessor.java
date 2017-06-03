@@ -99,7 +99,7 @@ public class MessageProcessor implements MqttMessageProcessable {
 					eventTypeId = "1";
 					homeStatus.setMotionDetectionStatus(1);
 					break;
-				case "2":
+				case "0":
 					eventTypeId = "2";
 					homeStatus.setMotionDetectionStatus(2);
 					break;
