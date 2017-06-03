@@ -40,10 +40,10 @@ public class DemoHgwApiController {
 	@PostMapping("/ems/devices/12345678/1101")
 	@ResponseStatus(HttpStatus.OK)
 	public void operateAir(@RequestBody HgwApi devices) {
-		if (devices.getModules().isOperationStatus()) {
-			iRecomonCtl.sendInfrared(5);
-		} else {
-			iRecomonCtl.sendInfrared(6);
+		if (Boolean.TRUE.equals(devices.getModules().isOperationStatus())) {
+			iRecomonCtl.sendInfrared(1);
+		} else if (Boolean.FALSE.equals(devices.getModules().isOperationStatus())) {
+			iRecomonCtl.sendInfrared(2);
 		}
 	}
 	
@@ -51,9 +51,9 @@ public class DemoHgwApiController {
 	@ResponseStatus(HttpStatus.OK)
 	public void operateLight(@RequestBody HgwApi devices) {
 		if (devices.getModules().isOperationStatus()) {
-			iRecomonCtl.sendInfrared(5);
+			iRecomonCtl.sendInfrared(3);
 		} else {
-			iRecomonCtl.sendInfrared(6);
+			iRecomonCtl.sendInfrared(4);
 		}
 	}
 	
