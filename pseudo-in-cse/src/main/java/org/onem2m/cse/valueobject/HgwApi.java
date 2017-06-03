@@ -19,7 +19,7 @@ public class HgwApi {
 	@Data
 	@NoArgsConstructor
 	public static class Modules {
-		private boolean operationStatus;
+		private Boolean operationStatus;
 		private HgwDataPoints hgwDataPoints;
 
 		@XmlElement(name = "hgwDataPoints")
