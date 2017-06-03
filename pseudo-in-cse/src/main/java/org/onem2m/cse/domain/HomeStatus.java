@@ -10,10 +10,10 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 @Entity
-@Table(name = "devices")
+@Table(name = "home_status")
 @Data
 @NoArgsConstructor
-public class Device {
+public class HomeStatus {
 	@Id
 	@NotNull
 	@NonNull

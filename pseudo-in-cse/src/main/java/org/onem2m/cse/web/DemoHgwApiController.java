@@ -1,7 +1,7 @@
 package org.onem2m.cse.web;
 
-import org.onem2m.cse.domain.Device;
-import org.onem2m.cse.service.DeviceService;
+import org.onem2m.cse.domain.HomeStatus;
+import org.onem2m.cse.service.HomeStatusService;
 import org.onem2m.cse.service.IRemoconController;
 import org.onem2m.cse.valueobject.HgwApi;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,24 +17,24 @@ import org.springframework.http.MediaType;
 public class DemoHgwApiController {
 
 	@Autowired
-	DeviceService deviceService;
+	HomeStatusService homeStatusService;
 	
 	@Autowired
 	IRemoconController iRecomonCtl;
 		
 	@GetMapping(value= "/ems/devices/12345678/0101", produces = MediaType.APPLICATION_XML_VALUE)
 	public String getMonitoringMode() {
-		Device device = deviceService.findOne("12345678");
-		return String.format("<Device><Modules><hgwDataPoints><Data><monitoringMode>%d</monitoringMode></Data></hgwDataPoints></Modules></Device>", device.getMonitoringMode());
+		HomeStatus homeStatus = homeStatusService.findOne("12345678");
+		return String.format("<Device><Modules><hgwDataPoints><Data><monitoringMode>%d</monitoringMode></Data></hgwDataPoints></Modules></Device>", homeStatus.getMonitoringMode());
 	}
 	
 	@PostMapping("/ems/devices/12345678/0101")
 	@ResponseStatus(HttpStatus.OK)
 	public void setMonitoringMode(@RequestBody HgwApi devices) {
 		int monitoringMode = devices.getModules().getHgwDataPoints().getData().getMonitoringMode();
-		Device device = deviceService.findOne("12345678");
-		device.setMonitoringMode(monitoringMode);
-		deviceService.update(device);
+		HomeStatus homeStatus = homeStatusService.findOne("12345678");
+		homeStatus.setMonitoringMode(monitoringMode);
+		homeStatusService.update(homeStatus);
 	}
 	
 	@PostMapping("/ems/devices/12345678/1201")
@@ -60,7 +60,7 @@ public class DemoHgwApiController {
 		
 	@GetMapping(value= "/ems/devices/12345678/2501", produces = MediaType.APPLICATION_XML_VALUE)
 	public String getMotionDetectionStatus() {
-		Device device = deviceService.findOne("12345678");
-		return String.format("<Device><Modules><operationStatus>true</operationStatus><humanDetectionSensorDataPoints><Data><humanDetectionStatus>%d</humanDetectionStatus></Data></humanDetectionSensorDataPoints></Modules></Device>", device.getMotionDetectionStatus());
+		HomeStatus homeStatus = homeStatusService.findOne("12345678");
+		return String.format("<Device><Modules><operationStatus>true</operationStatus><humanDetectionSensorDataPoints><Data><humanDetectionStatus>%d</humanDetectionStatus></Data></humanDetectionSensorDataPoints></Modules></Device>", homeStatus.getMotionDetectionStatus());
 	}
 }

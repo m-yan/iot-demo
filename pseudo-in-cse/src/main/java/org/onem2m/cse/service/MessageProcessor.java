@@ -17,8 +17,8 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.onem2m.cse.domain.Device;
-import org.onem2m.cse.repository.DeviceRepository;
+import org.onem2m.cse.domain.HomeStatus;
+import org.onem2m.cse.repository.HomeStatusRepository;
 import org.onem2m.mca.mqtt.client.MqttMessageProcessable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +37,7 @@ public class MessageProcessor implements MqttMessageProcessable {
 	private ApplicationContext context;
 
 	@Autowired
-	private DeviceRepository deviceRepo;
+	private HomeStatusRepository homeStatusRepo;
 	
 	@Override
 	public boolean process(String topic, int id, int qos, byte[] payload) {
@@ -73,25 +73,25 @@ public class MessageProcessor implements MqttMessageProcessable {
 			String now = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZZZ").format(new Date());
 			String eventTypeId = null;
 			// TODO: 複数世帯からメッセージを受ける時はトピック名で判定し、hgw_idも可変にする必要あり
-			Device device = deviceRepo.findOne("12345678");
+			HomeStatus homeStatus = homeStatusRepo.findOne("12345678");
 			if (strPayload.equals("1")) {
 				eventTypeId = "1";
-				device.setMotionDetectionStatus(1);
+				homeStatus.setMotionDetectionStatus(1);
 			} else if (strPayload.equals("0")) {
 				eventTypeId = "2";
-				device.setMotionDetectionStatus(2);
+				homeStatus.setMotionDetectionStatus(2);
 			} else {
 				logger.error("message is invalid.");
 				return;
 			}
 				
-			deviceRepo.save(device);
+			homeStatusRepo.save(homeStatus);
 			
 			String postBody = String.format("<?xmlversion='1.0' encoding='UTF-8'?><cin><cnf>application/xml:0</cnf><con><hgw_id>12345678</hgw_id><device_id>2501</device_id><event_type_id>%s</event_type_id><occurred_at>%s</occurred_at></con></cin>", eventTypeId, now);	
 			logger.info("HTTP POST body [{}]", postBody);
 			this.notifyToServer(postBody);
 			
-			if (device.getMonitoringMode() == 3) {
+			if (homeStatus.getMonitoringMode() == 3) {
 				postBody = String.format("<?xmlversion='1.0' encoding='UTF-8'?><cin><cnf>application/xml:0</cnf><con><hgw_id>12345678</hgw_id><device_id>2501</device_id><event_type_id>%s</event_type_id><occurred_at>%s</occurred_at></con></cin>", "3", now);	
 				logger.info("HTTP POST body [{}]", postBody);
 				this.notifyToServer(postBody);

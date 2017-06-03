@@ -1,66 +1,61 @@
 package org.onem2m.mca.mqtt;
 
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
+
 /**
  * oneM2M Mca binding MQTTの仕様に準拠したトピック名を返すユーティリティ。<br>
- * スタティックファクトリメソッドを使って、シングルトンで運用する。<br>
  * 
  */
 public final class TopicReference {
 
-	private static final OneM2MMcaProperties prop = OneM2MMcaProperties.getInstance();
-	private static final TopicReference INSTANCE = new TopicReference();
-
-	private final String topicForRequestFromCSE;
-	private final String topicForResponseToCSE;
-	private final String topicForRequestToCSE;
-	private final String topicForResponseFromCSE;
-	
-	private TopicReference() {
-		topicForRequestFromCSE = new StringBuilder().append("oneM2M/req/").append(prop.getInCseId()).append("/")
-				.append(prop.getInAeId()).append("/json").toString();
-		topicForResponseToCSE = new StringBuilder().append("oneM2M/resp/").append(prop.getInCseId()).append("/")
-				.append(prop.getInAeId()).append("/json").toString();
-		topicForRequestToCSE = new StringBuilder().append("oneM2M/req/").append(prop.getInAeId()).append("/")
-				.append(prop.getInCseId()).append("/json").toString();
-		topicForResponseFromCSE = new StringBuilder().append("oneM2M/resp/").append(prop.getInAeId()).append("/")
-				.append(prop.getInCseId()).append("/json").toString();
-	}
-
+	private static final Config config = ConfigFactory.load("onem2m");
+	private TopicReference() {}
 	
 	/**
-	 * @return	本クラスのインスタンス（シングルトン）
-	 */
-	public static TopicReference getInstance() {
-		return INSTANCE;
-	}
-
-	
-	/**
+	 * @param inAeId	IN-CSEから払い出されたIN-AE-ID
 	 * @return	IN-CSE→IN-AEに送信されるMca Requestのトピック名。これを指定してMQTT subscribeする。
 	 */
-	public String getTopicForRequestFromCSE() {
-		return topicForRequestFromCSE;
+	public static String getTopicForRequestFromCseTo(String inAeId) {
+		return new StringBuilder().append("oneM2M/req/").append(config.getString("IN-CSE-ID")).append("/")
+				.append(inAeId).append("/json").toString();
 	}
 	
 	/**
+	 * @param inAeId	IN-CSEから払い出されたIN-AE-ID
 	 * @return	IN-AE→IN-CSEに送信するMca Responseのトピック名。これを指定してMQTT publishする。
 	 */
-	public String getTopicForResponseToCSE() {
-		return topicForResponseToCSE;
+	public static String getTopicForResponseToCseFrom(String inAeId) {
+		return  new StringBuilder().append("oneM2M/resp/").append(config.getString("IN-CSE-ID")).append("/")
+				.append(inAeId).append("/json").toString();
 	}
 	
-	
 	/**
+	 * @param inAeId	IN-CSEから払い出されたIN-AE-ID
 	 * @return	IN-AE→IN-CSEに送信するMca Requestのトピック名。これを指定してMQTT publishする。
 	 */
-	public String getTopicForRequestToCSE() {
-		return topicForRequestToCSE;
+	public static String getTopicForRequestToCseFrom(String inAeId) {
+		return new StringBuilder().append("oneM2M/req/").append(inAeId).append("/")
+				.append(config.getString("IN-CSE-ID")).append("/json").toString();
 	}
 	
 	/**
+	 * @param inAeId	IN-CSEから払い出されたIN-AE-ID
 	 * @return	IN-CSE→IN-AEに送信されるMca Responseのトピック名。これを指定してMQTT subscribeする。
 	 */
-	public String getTopicForResponseFromCSE() {
-		return topicForResponseFromCSE;
+	public static String getTopicForResponseFromCseTo(String inAeId) {
+		return new StringBuilder().append("oneM2M/resp/").append(inAeId).append("/")
+				.append(config.getString("IN-CSE-ID")).append("/json").toString();
+	}
+	
+	
+	public static String getTopicForAERegistraionRequest(String credentialID) {
+		return new StringBuilder().append("oneM2M/reg_req/").append(credentialID).append("/")
+				.append(config.getString("IN-CSE-ID")).append("/json").toString();
+	}
+	
+	public static String getTopicForAERegistraionResponse(String credentialID) {
+		return new StringBuilder().append("oneM2M/reg_resp/").append(credentialID).append("/")
+				.append(config.getString("IN-CSE-ID")).append("/json").toString();
 	}
 }

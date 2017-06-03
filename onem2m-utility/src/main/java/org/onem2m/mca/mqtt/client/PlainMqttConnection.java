@@ -22,7 +22,7 @@ import lombok.Getter;
  */
 class PlainMqttConnection implements MqttConnection {
 
-	private static final Logger logger = LoggerFactory.getLogger(MqttConnection.class);
+	protected static final Logger logger = LoggerFactory.getLogger(MqttConnection.class);
 	private static final MqttConnectionProperties mqttConnProp = MqttConnectionProperties.getInstance();
 	protected final MqttConnectOptions connOpt = new MqttConnectOptions();
 

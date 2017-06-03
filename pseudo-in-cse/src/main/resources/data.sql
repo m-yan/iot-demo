@@ -1,1 +1,1 @@
-INSERT INTO devices(id, monitoring_mode, motion_detection_status) VALUES('12345678', '1', '2');
+INSERT INTO home_status(id, monitoring_mode, motion_detection_status) VALUES('12345678', '1', '2');

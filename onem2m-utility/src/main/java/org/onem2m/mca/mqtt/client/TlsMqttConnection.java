@@ -39,8 +39,7 @@ class TlsMqttConnection extends PlainMqttConnection {
 			connOpt.setSocketFactory(sslContext.getSocketFactory());
 		} catch (KeyManagementException | NoSuchAlgorithmException | KeyStoreException | CertificateException
 				| IOException | UnrecoverableKeyException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.error("TLS socket generation failed.");
 		}
 	}
 
