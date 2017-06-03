@@ -14,6 +14,8 @@ import lombok.Setter;
 @Setter
 public class ApplicationProperties {
 	private List<String> cseBrokerUrls;
+	private String inCseId;
 	private String topicForSubscribe;
 	private String topicForPublish;
+	private String irCommandsContainerUri;
 }
