@@ -36,6 +36,16 @@ public class DemoHgwApiController {
 		homeStatus.setMonitoringMode(monitoringMode);
 		homeStatusService.update(homeStatus);
 	}
+
+	@PostMapping("/ems/devices/12345678/1101")
+	@ResponseStatus(HttpStatus.OK)
+	public void operateAir(@RequestBody HgwApi devices) {
+		if (devices.getModules().isOperationStatus()) {
+			iRecomonCtl.sendInfrared(5);
+		} else {
+			iRecomonCtl.sendInfrared(6);
+		}
+	}
 	
 	@PostMapping("/ems/devices/12345678/1201")
 	@ResponseStatus(HttpStatus.OK)
@@ -44,13 +54,31 @@ public class DemoHgwApiController {
 			iRecomonCtl.sendInfrared(5);
 		} else {
 			iRecomonCtl.sendInfrared(6);
-		}		
+		}
 	}
 	
+	@PostMapping("/ems/devices/12345678/1301")
+	@ResponseStatus(HttpStatus.OK)
+	public void operateTV() {
+	}
+	
+
+	@GetMapping(value= "/ems/devices/12345678/2101", produces = MediaType.APPLICATION_XML_VALUE)
+	public String getTemperature() {
+		HomeStatus homeStatus = homeStatusService.findOne("12345678");
+		return String.format("<Device><Modules><temperatureSensorDataPoints><Data><measuredTemperatureValue>%d</measuredTemperatureValue></Data></temperatureSensorDataPoints></Modules></Device>", homeStatus.getTemperature().intValue() * 10);
+	}
+	
+	@GetMapping(value= "/ems/devices/12345678/2201", produces = MediaType.APPLICATION_XML_VALUE)
+	public String getHumidity() {
+		HomeStatus homeStatus = homeStatusService.findOne("12345678");
+		return String.format("<Device><Modules><humiditySensorDataPoints><Data><measuredValueOfRelativeHumidity>%d</measuredValueOfRelativeHumidity></Data></humiditySensorDataPoints></Modules></Device>", homeStatus.getHumidity());
+	}
 	
 	@GetMapping(value= "/ems/devices/12345678/2301", produces = MediaType.APPLICATION_XML_VALUE)
-	public String getIlluminanceSensorStatus() {
-		return "<Device><Modules><illuminanceSensorDataPoints><Data><measuredIlluminanceValue1>1000</measuredIlluminanceValue1></Data></illuminanceSensorDataPoints></Modules></Device>";
+	public String getIlluminance() {
+		HomeStatus homeStatus = homeStatusService.findOne("12345678");
+		return String.format("<Device><Modules><illuminanceSensorDataPoints><Data><measuredIlluminanceValue1>%d</measuredIlluminanceValue1></Data></illuminanceSensorDataPoints></Modules></Device>", homeStatus.getIlluminance());
 	}
 	
 	@GetMapping(value= "/ems/devices/12345678/2401", produces = MediaType.APPLICATION_XML_VALUE)

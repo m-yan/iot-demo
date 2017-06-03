@@ -28,6 +28,8 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @Service
 public class MessageProcessor implements MqttMessageProcessable {
 
@@ -91,6 +93,7 @@ public class MessageProcessor implements MqttMessageProcessable {
 			// TODO: 複数世帯からメッセージを受ける時はトピック名で判定し、hgw_idも可変にする必要あり
 			HomeStatus homeStatus = homeStatusRepo.findOne("12345678");
 
+			// TODO: ここから下が読みづらい。要リファクタリング。
 			String eventTypeId = null;
 			switch (to) {
 			case "/IN-CSE/ADN-AE/motionSensorData":
@@ -99,22 +102,38 @@ public class MessageProcessor implements MqttMessageProcessable {
 					eventTypeId = "1";
 					homeStatus.setMotionDetectionStatus(1);
 					break;
+					
 				case "0":
 					eventTypeId = "2";
 					homeStatus.setMotionDetectionStatus(2);
 					break;
+				
 				default:
 					logger.error("message is invalid.");
 					return;
 				}
 				break;
+				
 			case "/IN-CSE/ADN-AE/environmentalData":
-
+				HomeStatus environmentalData = null;
+				try {
+					environmentalData = new ObjectMapper().readValue(cinContent, HomeStatus.class);
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				if (environmentalData != null) {
+					homeStatus.setEnvironmentalData(environmentalData);
+				}
+				homeStatusRepo.save(homeStatus);
+				return;
+				
 			default:
+				return;
 			}
 
 			homeStatusRepo.save(homeStatus);
-
+			
 			String now = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZZZZZ").format(new Date());
 			String postBody = String.format(
 					"<?xmlversion='1.0' encoding='UTF-8'?><cin><cnf>application/xml:0</cnf><con><hgw_id>12345678</hgw_id><device_id>2501</device_id><event_type_id>%s</event_type_id><occurred_at>%s</occurred_at></con></cin>",
@@ -129,6 +148,7 @@ public class MessageProcessor implements MqttMessageProcessable {
 				logger.info("HTTP POST body [{}]", postBody);
 				this.notifyToServer(postBody);
 			}
+			
 		}
 
 		private String encodeToString(byte[] byte_array) {
@@ -176,6 +196,6 @@ public class MessageProcessor implements MqttMessageProcessable {
 			}
 
 		}
-
+		
 	}
 }
