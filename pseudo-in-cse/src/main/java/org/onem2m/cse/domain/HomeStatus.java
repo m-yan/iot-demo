@@ -38,6 +38,12 @@ public class HomeStatus {
 	@Column
 	private Integer illuminance = 1000;
 	
+	@Column
+	private Boolean ocSensorPower = true;
+	
+	@Column
+	private Boolean mSensorPower = true;
+	
 	public void setEnvironmentalData(HomeStatus homeStatus) {
 		this.temperature = homeStatus.getTemperature();
 		this.humidity = homeStatus.getHumidity();

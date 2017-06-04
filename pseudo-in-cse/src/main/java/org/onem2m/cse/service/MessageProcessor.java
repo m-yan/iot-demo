@@ -141,7 +141,7 @@ public class MessageProcessor implements MqttMessageProcessable {
 			logger.info("HTTP POST body [{}]", postBody);
 			this.notifyToServer(postBody);
 
-			if (cinContent.equals("1") && homeStatus.getMonitoringMode() == 3) {
+			if (cinContent.equals("1") && homeStatus.getMonitoringMode() == 3 && homeStatus.getMSensorPower()) {
 				postBody = String.format(
 						"<?xmlversion='1.0' encoding='UTF-8'?><cin><cnf>application/xml:0</cnf><con><hgw_id>12345678</hgw_id><device_id>2501</device_id><event_type_id>%s</event_type_id><occurred_at>%s</occurred_at></con></cin>",
 						"3", now);

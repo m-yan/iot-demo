@@ -86,10 +86,36 @@ public class DemoHgwApiController {
 	public String getDoorSensorStatus() {
 		return "<Device><Modules><operationStatus>true</operationStatus><openCloseSensorDataPoints><Data><degreeOfOpeningDetectionStatus2>2</degreeOfOpeningDetectionStatus2></Data></openCloseSensorDataPoints></Modules></Device>";
 	}
+	
+	@PostMapping("/ems/devices/12345678/2401")
+	@ResponseStatus(HttpStatus.OK)
+	public void operateOcSensor(@RequestBody HgwApi devices) {
+		HomeStatus homeStatus = homeStatusService.findOne("12345678");
+		if (devices.getModules().getOperationStatus() == null) {
+		} else if (devices.getModules().getOperationStatus()) {
+			homeStatus.setOcSensorPower(true);
+		} else {
+			homeStatus.setOcSensorPower(false);
+		}
+		homeStatusService.update(homeStatus);
+	}
 		
 	@GetMapping(value= "/ems/devices/12345678/2501", produces = MediaType.APPLICATION_XML_VALUE)
 	public String getMotionDetectionStatus() {
 		HomeStatus homeStatus = homeStatusService.findOne("12345678");
 		return String.format("<Device><Modules><operationStatus>true</operationStatus><humanDetectionSensorDataPoints><Data><humanDetectionStatus>%d</humanDetectionStatus></Data></humanDetectionSensorDataPoints></Modules></Device>", homeStatus.getMotionDetectionStatus());
+	}
+	
+	@PostMapping("/ems/devices/12345678/2501")
+	@ResponseStatus(HttpStatus.OK)
+	public void operateMSensor(@RequestBody HgwApi devices) {
+		HomeStatus homeStatus = homeStatusService.findOne("12345678");
+		if (devices.getModules().getOperationStatus() == null) {
+		} else if (devices.getModules().getOperationStatus()) {
+			homeStatus.setMSensorPower(true);
+		} else {
+			homeStatus.setMSensorPower(false);
+		}
+		homeStatusService.update(homeStatus);
 	}
 }
