@@ -84,7 +84,8 @@ public class DemoHgwApiController {
 	
 	@GetMapping(value= "/ems/devices/12345678/2401", produces = MediaType.APPLICATION_XML_VALUE)
 	public String getDoorSensorStatus() {
-		return "<Device><Modules><operationStatus>true</operationStatus><openCloseSensorDataPoints><Data><degreeOfOpeningDetectionStatus2>2</degreeOfOpeningDetectionStatus2></Data></openCloseSensorDataPoints></Modules></Device>";
+		HomeStatus homeStatus = homeStatusService.findOne("12345678");
+		return String.format("<Device><Modules><operationStatus>%s</operationStatus><openCloseSensorDataPoints><Data><degreeOfOpeningDetectionStatus2>2</degreeOfOpeningDetectionStatus2></Data></openCloseSensorDataPoints></Modules></Device>", homeStatus.getOcSensorPower().toString());
 	}
 	
 	@PostMapping("/ems/devices/12345678/2401")
@@ -103,7 +104,7 @@ public class DemoHgwApiController {
 	@GetMapping(value= "/ems/devices/12345678/2501", produces = MediaType.APPLICATION_XML_VALUE)
 	public String getMotionDetectionStatus() {
 		HomeStatus homeStatus = homeStatusService.findOne("12345678");
-		return String.format("<Device><Modules><operationStatus>true</operationStatus><humanDetectionSensorDataPoints><Data><humanDetectionStatus>%d</humanDetectionStatus></Data></humanDetectionSensorDataPoints></Modules></Device>", homeStatus.getMotionDetectionStatus());
+		return String.format("<Device><Modules><operationStatus>%s</operationStatus><humanDetectionSensorDataPoints><Data><humanDetectionStatus>%d</humanDetectionStatus></Data></humanDetectionSensorDataPoints></Modules></Device>", homeStatus.getOcSensorPower().toString(), homeStatus.getMotionDetectionStatus());
 	}
 	
 	@PostMapping("/ems/devices/12345678/2501")
