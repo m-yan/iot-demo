@@ -104,7 +104,7 @@ public class DemoHgwApiController {
 	@GetMapping(value= "/ems/devices/12345678/2501", produces = MediaType.APPLICATION_XML_VALUE)
 	public String getMotionDetectionStatus() {
 		HomeStatus homeStatus = homeStatusService.findOne("12345678");
-		return String.format("<Device><Modules><operationStatus>%s</operationStatus><humanDetectionSensorDataPoints><Data><humanDetectionStatus>%d</humanDetectionStatus></Data></humanDetectionSensorDataPoints></Modules></Device>", homeStatus.getOcSensorPower().toString(), homeStatus.getMotionDetectionStatus());
+		return String.format("<Device><Modules><operationStatus>%s</operationStatus><humanDetectionSensorDataPoints><Data><humanDetectionStatus>%d</humanDetectionStatus></Data></humanDetectionSensorDataPoints></Modules></Device>", homeStatus.getMSensorPower().toString(), homeStatus.getMotionDetectionStatus());
 	}
 	
 	@PostMapping("/ems/devices/12345678/2501")
