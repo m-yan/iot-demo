@@ -34,7 +34,7 @@ class TlsMqttConnection extends PlainMqttConnection {
 			TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
 			tmf.init(trustStore);
 
-			SSLContext sslContext = SSLContext.getInstance("TLSv1");
+			SSLContext sslContext = SSLContext.getInstance("TLSv1.2");
 			sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), new SecureRandom());
 			connOpt.setSocketFactory(sslContext.getSocketFactory());
 		} catch (KeyManagementException | NoSuchAlgorithmException | KeyStoreException | CertificateException

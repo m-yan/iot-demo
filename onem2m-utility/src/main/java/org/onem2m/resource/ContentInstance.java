@@ -2,16 +2,15 @@ package org.onem2m.resource;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
-
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NonNull;
-import lombok.Setter;
 
-@Getter
-@Setter
-@JsonRootName(value = "m2m:cin")
-@NoArgsConstructor
+@Data
+@AllArgsConstructor
+@EqualsAndHashCode(callSuper=false)
+@JsonRootName(value = "cin")
 public class ContentInstance extends Resource {
 	
 	@JsonProperty("cnf")
@@ -35,7 +34,7 @@ public class ContentInstance extends Resource {
 		return ResourceType.contentInstance;
 	}
 	
-	public ContentInstance(String content) {
+	public ContentInstance(@NonNull String content) {
 		super();
 		this.content = content;
 	}

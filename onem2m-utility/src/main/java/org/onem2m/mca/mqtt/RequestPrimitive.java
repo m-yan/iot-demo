@@ -10,30 +10,29 @@ import org.onem2m.resource.Resource;
 import org.onem2m.resource.Resource.ResourceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NonNull;
-import lombok.Setter;
-import lombok.ToString;
 
 /**
  * oneM2M RequestPrimitiveを扱うオブジェクト。<br>
  * 
  */
-@Getter
-@Setter
-@ToString
-@NoArgsConstructor
+@Data
+@AllArgsConstructor
+@EqualsAndHashCode(callSuper=false)
 @JsonIgnoreProperties(ignoreUnknown = true)
 public final class RequestPrimitive extends Primitive {
 
 	private static final Logger logger = LoggerFactory.getLogger(RequestPrimitive.class);
-
+	
 	// リソースに対する操作の種類（1:Create, 2:Retrieve, 3:Update, 4:Delete, 5:Notify）
 	@JsonProperty("op")
 	@NonNull
@@ -49,9 +48,18 @@ public final class RequestPrimitive extends Primitive {
 	@NonNull
 	private String from;
 
+	// リクエストのID
+	@JsonProperty("rqi")
+	@NonNull
+	private String requestId;
+	
 	// CREATEするリソースの種別 CREATE時のみ指定する
 	@JsonProperty("ty")
 	private Integer resourceType;
+	
+	// メッセージ本文
+	@JsonProperty("pc")
+	private Object content;
 	
 	// Responseの形式
 	@JsonProperty("rcn")
@@ -65,21 +73,10 @@ public final class RequestPrimitive extends Primitive {
 	@JsonProperty("fc")
 	private FilterCriteria filterCriteria;	
 	
-
-	@JsonProperty("ty")
-	public void setResourceType(Integer value) {
-		this.resourceType = value;
-	}
 	
-
 	public void setResourceType(ResourceType type) {
 		this.resourceType = type.getValue();
-	}
-	
-	@JsonProperty("rcn")
-	public void setResultContent(Integer value) {
-		this.resultContent = value;
-	}
+	}	
 	
 	public void setResultContent(ResultContent resultContent) {
 		this.resultContent = resultContent.getValue();
@@ -90,12 +87,14 @@ public final class RequestPrimitive extends Primitive {
 		this.to = to;
 		this.from = from;
 		
+		// 一意なrequestIdを生成
 		String now = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
 		String randomString = RandomStringUtils.randomAlphabetic(5);
 		this.requestId = now + randomString;
+		
 		if (content != null) {
 			try {
-				this.content = mapper.readValue(content.toJson(), new TypeReference<Map<String, Map<String, String>>>() {});
+				this.content = mapper.readValue(content.toJson(), Object.class);
 			} catch (IOException e) {
 				logger.warn("Received Resource does not conform to the terms of oneM2M.");
 				this.content = null;
@@ -171,5 +170,39 @@ public final class RequestPrimitive extends Primitive {
 		}
 	}
 
+	/**
+	 * Contentに指定されたリソースのタイプを返す。該当するものがない場合はnullを返す。
+	 * @return	Contentに指定されたリソースのタイプ
+	 */
+	@JsonIgnore
+	public ResourceType getContentResourceType() {
+		@SuppressWarnings("unchecked")
+		Map<String, Object> temp = (Map<String, Object>) this.content;
+		
+		ResourceType[] types = ResourceType.values();
+		for (ResourceType type : types) {
+			if (temp.containsKey(type.getShortname())) {
+				return type;
+			}
+		}
+		return null;
+	}
+	
+	/**
+	 * PrimitiveContent（メッセージ本文）を指定の型に変換して返す
+	 * @param type		変換後の型
+	 * @return			typeに指定された型に変換されたPrimitiveContent. 変換に失敗した場合はnullを返す
+	 * 
+	 */
+	@JsonIgnore
+	public <T extends Resource> T getContentCastedBy(Class<T> type) {
+		try {
+			String jsonPrimitiveContent = mapper.writeValueAsString(this.content);
+			return Resource.valueOf(jsonPrimitiveContent, type);
+		} catch (JsonProcessingException e) {
+			logger.warn("Failed to cast to the specified type.");
+		}
+		return null;
+	}
 
 }

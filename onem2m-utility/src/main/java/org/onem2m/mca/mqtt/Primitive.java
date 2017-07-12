@@ -1,41 +1,23 @@
 package org.onem2m.mca.mqtt;
 
-import org.onem2m.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.Setter;
 
 /**
  * oneM2MのRequestPrimitiveとResponsePrimitiveの共通部分を抽出した抽象オブジェクト
  */
-@Getter
-@Setter
-@NoArgsConstructor
+
 public abstract class Primitive {
 	
 	private static final Logger logger = LoggerFactory.getLogger(Primitive.class);
 	protected static final ObjectMapper mapper = new ObjectMapper();
 	static {
 		mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-	}
-	
-	// リクエストのID
-	@JsonProperty("rqi")
-	@NonNull
-	protected String requestId;
-		
-	// メッセージ本文
-	@JsonProperty("pc")
-	protected Object content;
-	
+	}	
 	
 	/**
 	 * @return	JSONシリアライズされたインスタンス
@@ -49,25 +31,18 @@ public abstract class Primitive {
 		}
 	}
 	
-	/**
-	 * PrimitiveContent（メッセージ本文）を指定の型に変換して返す
-	 * @param type		変換後の型
-	 * @return			typeに指定された型に変換されたPrimitiveContent. 変換に失敗した場合はnullを返す
-	 * 
-	 */
-	@JsonIgnore
-	public <T extends Resource> T getContentCastedBy(Class<T> type) {
-		try {
-			String jsonPrimitiveContent = mapper.writeValueAsString(this.content);
-			return Resource.valueOf(jsonPrimitiveContent, type);
-		} catch (JsonProcessingException e) {
-			logger.warn("Failed to cast to the specified type.");
-		}
-		return null;
-	}
-	
-	
 	// 各種DataType
+	
+	public static enum StdEventCat {
+		IMMEDIATE(2), BESTEFFORT(3), LATEST(4);
+
+		@Getter
+		private final Integer value;
+
+		StdEventCat(final Integer value) {
+			this.value = value;
+		}
+	}
 	
 	public static enum Operation {
 		CREATE(1), RETRIEVE(2), UPDATE(3), DELETE(4), NOTIFY(5);

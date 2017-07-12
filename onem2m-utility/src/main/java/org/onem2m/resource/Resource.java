@@ -14,19 +14,17 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class Resource {
@@ -40,6 +38,9 @@ public abstract class Resource {
 		mapper.enable(DeserializationFeature.UNWRAP_ROOT_VALUE);
 	}
 	
+	@JsonIgnore
+	public abstract ResourceType getResourceType();
+
 	@JsonProperty("ri")
 	private String resourceID;
 
@@ -78,9 +79,8 @@ public abstract class Resource {
 	
 	@JsonProperty("ch")
 	private List<Object> childResource;	
-	
-	@JsonIgnore
-	public abstract ResourceType getResourceType();
+
+
 	
 	/**
 	 * JSONシリアライズされたResourceをparseしてインスタンスを生成するスタティックファクトリメソッド
@@ -119,29 +119,24 @@ public abstract class Resource {
 	}
 	
 	public static enum ResourceType {
-		AE(2), 
-		container(3), 
-		contentInstance(4),
-		remoteCSE(16),
-		AEAnnc(10002),
-		nodeAnnc(10014);
+		AE(2, "ae"), 
+		container(3, "cnt"), 
+		contentInstance(4, "cin"),
+		remoteCSE(16, "csr"),
+		AEAnnc(10002, "aeA"),
+		nodeAnnc(10014, "nodA");
 
 		@Getter
 		private final Integer value;
+		
+		@Getter
+		private final String shortname;
 
-		ResourceType(final Integer value) {
+		ResourceType(Integer value, String shortname) {
 			this.value = value;
+			this.shortname = shortname;
 		}
 
-		public static ResourceType getResourceType(final Integer value) {
-			ResourceType[] types = ResourceType.values();
-			for (ResourceType type : types) {
-				if (type.getValue() == value) {
-					return type;
-				}
-			}
-			return null;
-		}
 	}
 
 }

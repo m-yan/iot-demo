@@ -31,6 +31,9 @@ class PlainMqttConnection implements MqttConnection {
 
 	@Getter
 	private final String brokerUrl;
+	
+	private String[] subscribingTopics;
+	
 	private boolean isClosed = false;
 
 	// 1ブローカーあたり1接続の制約を守るため、
@@ -53,48 +56,62 @@ class PlainMqttConnection implements MqttConnection {
 	}
 
 	@Override
-	public void connect() throws MqttException, MqttSecurityException {
-		if (mqttClient == null) {
-			// oneM2MではClientIDのフォーマット仕様（A::<IN-AE-ID>で固定）が規定されており、同じIN-AEのClientIDは同じになる。
-			// Brokerは同じClientIDからの複数の接続は許可しないため、、
-			// oneM2MのClientID仕様に準拠すると、IN-AEを分散アプリケーションにするとBrokerとの接続に問題が生じるケースが出てきてしまう。
-			// そのため、CSE側との接続に支障がないかぎりは、ClientIDは仕様に準拠しないものとする。
-			mqttClient = new MqttClient(brokerUrl, MqttClient.generateClientId(), new MemoryPersistence());
-			mqttClient.setCallback(this);
+	public synchronized void connect() throws MqttException, MqttSecurityException {
+		if (mqttClient != null && mqttClient.isConnected()) {
+			// 接続済の場合は何もしない
+			return;
 		}
-		if (!mqttClient.isConnected()) {
-			logger.info("Connecting to {} ....", mqttClient.getServerURI());
-			mqttClient.connect(connOpt);
-			logger.info("Connected to {}", mqttClient.getServerURI());
-			isClosed = false;
-		}
+
+		// oneM2MではClientIDのフォーマット仕様（A::<IN-AE-ID>で固定）が規定されており、同じIN-AEのClientIDは同じになる。
+		// Brokerは同じClientIDからの複数の接続は許可しないため、、
+		// oneM2MのClientID仕様に準拠すると、IN-AEを分散アプリケーションにするとBrokerとの接続に問題が生じるケースが出てきてしまう。
+		// そのため、CSE側との接続に支障がないかぎりは、ClientIDは仕様に準拠しないものとする。
+		mqttClient = new MqttClient(brokerUrl, MqttClient.generateClientId(), new MemoryPersistence());
+		mqttClient.setCallback(this);
+
+		logger.info("Connecting to {} ....", mqttClient.getServerURI());
+		mqttClient.connect(connOpt);
+		logger.info("Connected to {}", mqttClient.getServerURI());
+		isClosed = false;
+
 	}
 
 	@Override
 	public void subscribe(String topic, MqttMessageProcessable recevier) throws MqttException {
-		if (mqttClient == null) {
+		if (mqttClient == null || !mqttClient.isConnected()) {
+			// 未接続の場合は何もしない
 			return;
 		}
 		this.recevier = recevier;
+		
 		mqttClient.subscribe(topic, mqttConnProp.getQos());
 		logger.info("Subscribing topic. " + topic);
+		
+		// 切断➝再接続時の再Subscribeのためトピックを保持
+		this.subscribingTopics = new String[1];
+		this.subscribingTopics[0] = topic;
 	}
 
 	@Override
 	public void subscribe(String[] topics, MqttMessageProcessable recevier) throws MqttException {
-		if (mqttClient == null) {
+		if (mqttClient == null || !mqttClient.isConnected()) {
+			// 未接続の場合は何もしない
 			return;
 		}
 		this.recevier = recevier;
 		int[] qos = new int[topics.length];
 		Arrays.fill(qos, mqttConnProp.getQos());
 		mqttClient.subscribe(topics, qos);
-		Arrays.asList(topics).stream().forEach(s -> logger.info("Subscribing topics. " + s));
+		Arrays.asList(topics).stream().forEach(s -> logger.info("Subscribing topic. " + s));
+		
+		// 切断➝再接続時の再Subscribeのためトピックを保持
+		this.subscribingTopics = topics;
 	}
 
 	@Override
 	public void publish(String topic, byte[] payload) throws MqttException {
-		if (mqttClient == null) {
+		// 未接続の場合は何もしない
+		if (mqttClient == null || !mqttClient.isConnected()) {
 			return;
 		}
 		MqttTopic mqttTopic = mqttClient.getTopic(topic);
@@ -119,6 +136,7 @@ class PlainMqttConnection implements MqttConnection {
 			try {
 				token = mqttTopic.publish(message);
 				token.waitForCompletion();
+				logger.debug("The message was published successfully.");
 				return;
 			} catch (MqttException e) {
 				logger.error("MQTT PUBLISH failed. " + e.getMessage());
@@ -134,7 +152,7 @@ class PlainMqttConnection implements MqttConnection {
 	}
 
 	@Override
-	public void close() throws MqttException {
+	public synchronized void close() throws MqttException {
 		isClosed = true;
 		if (mqttClient != null && mqttClient.isConnected()) {
 			mqttClient.disconnect();
@@ -166,6 +184,7 @@ class PlainMqttConnection implements MqttConnection {
 				if (!mqttClient.isConnected()) {
 					mqttClient.connect(connOpt);
 					logger.info("Reconnected to " + mqttClient.getServerURI());
+					this.subscribe(this.subscribingTopics, this.recevier);
 				}
 				return;
 			} catch (MqttException e) {
@@ -181,7 +200,7 @@ class PlainMqttConnection implements MqttConnection {
 
 	@Override
 	public void deliveryComplete(IMqttDeliveryToken arg0) {
-		logger.debug("Client delivery completed. Ending client session");
+		logger.debug("Client delivery completed.");
 	}
 
 	@Override
