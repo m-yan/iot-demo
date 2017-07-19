@@ -67,7 +67,8 @@ public class DemoHgwApiController {
 	@GetMapping(value= "/ems/devices/12345678/2101", produces = MediaType.APPLICATION_XML_VALUE)
 	public String getTemperature() {
 		HomeStatus homeStatus = homeStatusService.findOne("12345678");
-		return String.format("<Device><Modules><temperatureSensorDataPoints><Data><measuredTemperatureValue>%d</measuredTemperatureValue></Data></temperatureSensorDataPoints></Modules></Device>", homeStatus.getTemperature().intValue() * 10);
+		Float temperature = homeStatus.getTemperature() * 10;
+		return String.format("<Device><Modules><temperatureSensorDataPoints><Data><measuredTemperatureValue>%d</measuredTemperatureValue></Data></temperatureSensorDataPoints></Modules></Device>", temperature.intValue());
 	}
 	
 	@GetMapping(value= "/ems/devices/12345678/2201", produces = MediaType.APPLICATION_XML_VALUE)
