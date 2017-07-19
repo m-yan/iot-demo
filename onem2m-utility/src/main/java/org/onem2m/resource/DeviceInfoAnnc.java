@@ -10,7 +10,7 @@ import lombok.NonNull;
 @Data
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper=false)
-@JsonRootName(value = "dviA")
+@JsonRootName(value = "m2m:dviA")
 public class DeviceInfoAnnc extends Resource {
 
 	@JsonProperty("mgd")

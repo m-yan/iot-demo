@@ -10,7 +10,7 @@ import lombok.NonNull;
 @Data
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper=false)
-@JsonRootName(value = "aeA")
+@JsonRootName(value = "m2m:aeA")
 public class AEAnnc extends Resource {
 
 	@JsonProperty("api")

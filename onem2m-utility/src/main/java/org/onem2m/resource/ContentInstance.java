@@ -10,7 +10,7 @@ import lombok.NonNull;
 @Data
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper=false)
-@JsonRootName(value = "cin")
+@JsonRootName(value = "m2m:cin")
 public class ContentInstance extends Resource {
 	
 	@JsonProperty("cnf")

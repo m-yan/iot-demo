@@ -11,7 +11,7 @@ import lombok.NonNull;
 @Data
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper=false)
-@JsonRootName(value = "csr")
+@JsonRootName(value = "m2m:csr")
 public class RemoteCSE extends Resource {
 
 	@JsonProperty("poa")
