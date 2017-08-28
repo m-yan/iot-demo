@@ -1,0 +1,1 @@
+INSERT INTO home_status(id, monitoring_mode, motion_detection_status, temperature, humidity, illuminance, oc_sensor_power, m_sensor_power) VALUES('12345678', '1', '2', '25.0', '60', '1000', true, true);

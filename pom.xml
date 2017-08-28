@@ -12,6 +12,7 @@
   <modules>
     <module>onem2m-utility</module>
     <module>pseudo-in-cse</module>
+    <module>ha-ipe</module>
   </modules>
 
 </project>
