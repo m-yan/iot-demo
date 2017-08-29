@@ -8,11 +8,8 @@ ae_id: C55DED47A-0aee7e29
 # ADN-AEのパスワード
 ae_password: EODFOSKGOR
 
-# iRemoconのコマンドを受け渡しするcontainerのURI
-ir_commands_container_uri: /HPE_IoT/hgw01/iRemoconCommands
-
 # UIoT PF DAVのホスト名(IP)
-dav_hostname: localhost
+dav_hostname: sp-uiot.japaneast.cloudapp.azure.com
 
 # UIoT PF DAVのポート番号
 dav_port: 8180

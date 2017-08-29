@@ -36,7 +36,7 @@ public class IRemoconController {
 	
 	private String createRequest(String command) {
 		ContentInstance cin = new ContentInstance(command);
-		RequestPrimitive request = RequestPrimitive.newCreateRequest(prop.getIrCommandsContainerUri(), "HPEIoT", cin);
+		RequestPrimitive request = RequestPrimitive.newCreateRequest("HPE_IoT/ADN-AE", "HPE_IoT", cin);
 		return request.toJson();
 	}
 	
