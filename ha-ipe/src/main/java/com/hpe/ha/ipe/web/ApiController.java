@@ -65,16 +65,15 @@ public class ApiController {
 				notification = mapper.readValue(body, Notification.class);
 			} catch (JsonParseException e) {
 				logger.warn("Received JSON format is invalid.");
-				return null;
 			} catch (JsonMappingException e) {
 				logger.warn("Received Resource does not conform to the terms of oneM2M.");
 				logger.warn(e.getMessage());
-				return null;
 			} catch (IOException e) {
 				logger.error(e.getMessage(), e);
-				return null;
 			}
-		iRemoconCtl.sendInfrared(Integer.valueOf(notification.getRep().getCon()));
+		if (notification != null) {
+			iRemoconCtl.sendInfrared(Integer.valueOf(notification.getRep().getCon()));
+		}
 		return ResponseEntity.ok().header("X-M2M-RI", requestId).header("X-M2M-RSC", "2000").body(null);
 	}
 	
