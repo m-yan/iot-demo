@@ -72,7 +72,7 @@ public class ApiController {
 				logger.error(e.getMessage(), e);
 			}
 		if (notification != null) {
-			iRemoconCtl.sendInfrared(Integer.valueOf(notification.getRep().getCon()));
+			iRemoconCtl.sendInfrared(Integer.valueOf(notification.getNev().getRep().getCon()));
 		}
 		return ResponseEntity.ok().header("X-M2M-RI", requestId).header("X-M2M-RSC", "2000").body(null);
 	}

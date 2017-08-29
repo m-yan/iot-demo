@@ -46,6 +46,7 @@ public class IRemoconController {
 		MqttConnection mqttConnection = mqttConnectionManager.getConnection();
 		try {
 			mqttConnection.publish(topic, payload);
+			logger.info("MQTT Message sended. topic: [{}]  payload: [{}]", topic, request);
 		} catch (MqttException e) {
 			logger.error("Failed to send request. There is some problem in communication with CSE.");
 		}

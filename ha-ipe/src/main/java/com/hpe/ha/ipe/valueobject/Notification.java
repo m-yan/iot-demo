@@ -5,18 +5,28 @@ import com.fasterxml.jackson.annotation.JsonRootName;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@JsonRootName(value = "m2m:nev")
+@JsonRootName(value = "m2m:sgn")
 @Data
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Notification {
-	private Representation rep;
+	private NotifcationEvent nev;
 	
 	@Data
 	@NoArgsConstructor
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	public static class Representation {
-		private String con;
+	public static class NotifcationEvent {
+		private Representation rep;
+		
+		@Data
+		@NoArgsConstructor
+		@JsonIgnoreProperties(ignoreUnknown = true)
+		public static class Representation {
+			private String con;
+		}
+		
 	}
+	
+	
 
 }
