@@ -54,13 +54,13 @@ public abstract class Resource {
 	private String parentID;
 
 	@JsonProperty("ct")
-	@JsonFormat(pattern = "yyyyMMdd'T'HHmmss")
+	@JsonFormat(pattern = "yyyyMMdd'T'HHmmss,SSSSSS")
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
 	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 	private LocalDateTime creationTime;
 
 	@JsonProperty("lt")
-	@JsonFormat(pattern = "yyyyMMdd'T'HHmmss")
+	@JsonFormat(pattern = "yyyyMMdd'T'HHmmss,SSSSSS")
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
 	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 	private LocalDateTime lastModifiedTime;
@@ -69,7 +69,7 @@ public abstract class Resource {
 	private String labels;
 
 	@JsonProperty("et")
-	@JsonFormat(pattern = "yyyyMMdd'T'HHmmss")
+	@JsonFormat(pattern = "yyyyMMdd'T'HHmmss,SSSSSS")
 	@JsonSerialize(using = LocalDateTimeSerializer.class)
 	@JsonDeserialize(using = LocalDateTimeDeserializer.class)
 	private LocalDateTime expirationTime;

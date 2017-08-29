@@ -1,6 +1,8 @@
 package com.hpe.ha.ipe.web;
 
 import java.io.IOException;
+
+import org.onem2m.resource.ContentInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,9 +62,10 @@ public class ApiController {
 
 	@PostMapping("/ha/ipe/forwardNotification")
 	public ResponseEntity<String> forwardNotification(@RequestBody String body, @RequestHeader("X-M2M-RI") String requestId) {
-		Notification notification = null;
+		ContentInstance notifiedCin = null;
 		  try {
-				notification = mapper.readValue(body, Notification.class);
+				Notification notification = mapper.readValue(body, Notification.class);
+				notifiedCin = mapper.readValue(notification.getNev().getRep(), ContentInstance.class);
 			} catch (JsonParseException e) {
 				logger.warn("Received JSON format is invalid.");
 			} catch (JsonMappingException e) {
@@ -71,8 +74,8 @@ public class ApiController {
 			} catch (IOException e) {
 				logger.error(e.getMessage(), e);
 			}
-		if (notification != null) {
-			iRemoconCtl.sendInfrared(Integer.valueOf(notification.getNev().getRep().getCin().getContent()));
+		if (notifiedCin != null) {
+			iRemoconCtl.sendInfrared(Integer.valueOf(notifiedCin.getContent()));
 		}
 		return ResponseEntity.ok().header("X-M2M-RI", requestId).header("X-M2M-RSC", "2000").body(null);
 	}
