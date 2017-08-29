@@ -43,15 +43,15 @@ public class MessageProcessor implements MqttMessageProcessable {
 	@Autowired
 	private ApplicationProperties prop;
 	
-	private CloseableHttpClient httpclient = null;
-	
-	@PostConstruct
-	public void init() {
-		CredentialsProvider credsProvider = new BasicCredentialsProvider();
-		credsProvider.setCredentials(new AuthScope(prop.getDavHostname(), prop.getDavPort()),
-				new UsernamePasswordCredentials(prop.getAeId(), prop.getAePassword()));
-		httpclient = HttpClients.custom().setDefaultCredentialsProvider(credsProvider).build();
-	}
+//	private CloseableHttpClient httpclient = null;
+//	
+//	@PostConstruct
+//	public void init() {
+//		CredentialsProvider credsProvider = new BasicCredentialsProvider();
+//		credsProvider.setCredentials(new AuthScope(prop.getDavHostname(), prop.getDavPort()),
+//				new UsernamePasswordCredentials(prop.getAeId(), prop.getAePassword()));
+//		httpclient = HttpClients.custom().setDefaultCredentialsProvider(credsProvider).build();
+//	}
 
 	@Override
 	public boolean process(String topic, int id, int qos, byte[] payload) {
@@ -108,6 +108,12 @@ public class MessageProcessor implements MqttMessageProcessable {
 			} catch (URISyntaxException e1) {
 				e1.printStackTrace();
 			}
+			
+			CredentialsProvider credsProvider = new BasicCredentialsProvider();
+			credsProvider.setCredentials(new AuthScope(prop.getDavHostname(), prop.getDavPort()),
+					new UsernamePasswordCredentials(prop.getAeId(), prop.getAePassword()));
+			CloseableHttpClient httpclient = HttpClients.custom().setDefaultCredentialsProvider(credsProvider).build();
+			
 			try {
 				new HttpPost();
 				HttpPost httpPost = new HttpPost(fowardingURL);
@@ -116,7 +122,7 @@ public class MessageProcessor implements MqttMessageProcessable {
 				httpPost.setHeader("X-M2M-RI", request.getRequestId());
 				httpPost.setHeader("X-M2M-Origin", prop.getAeId());
 				httpPost.setEntity(new StringEntity(request.getContent().toString(), StandardCharsets.UTF_8));
-
+				
 				try {
 					httpclient.execute(httpPost);
 				} catch (ClientProtocolException e) {
