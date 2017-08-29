@@ -1,14 +1,17 @@
 package com.hpe.ha.ipe.valueobject;
 
+import org.onem2m.resource.ContentInstance;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@JsonRootName(value = "m2m:sgn")
+
 @Data
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
+@JsonRootName(value = "m2m:sgn")
 public class Notification {
 	private NotifcationEvent nev;
 	
@@ -22,7 +25,7 @@ public class Notification {
 		@NoArgsConstructor
 		@JsonIgnoreProperties(ignoreUnknown = true)
 		public static class Representation {
-			private String con;
+			private ContentInstance cin;
 		}
 		
 	}
