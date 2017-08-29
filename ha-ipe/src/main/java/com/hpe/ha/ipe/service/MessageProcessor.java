@@ -14,6 +14,7 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
@@ -109,22 +110,21 @@ public class MessageProcessor implements MqttMessageProcessable {
 				e1.printStackTrace();
 			}
 			
-			CredentialsProvider credsProvider = new BasicCredentialsProvider();
-			credsProvider.setCredentials(new AuthScope(prop.getDavHostname(), prop.getDavPort()),
-					new UsernamePasswordCredentials(prop.getAeId(), prop.getAePassword()));
-			CloseableHttpClient httpclient = HttpClients.custom().setDefaultCredentialsProvider(credsProvider).build();
+			CloseableHttpClient httpclient = HttpClients.createDefault();
 			
 			try {
 				new HttpPost();
 				HttpPost httpPost = new HttpPost(fowardingURL);
-				httpPost.setHeader("Content-Type", "application/vnd.onem2m-res+json; ty=4");
-				httpPost.setHeader("Accept", "application/vnd.onem2m-res+json");
-				httpPost.setHeader("X-M2M-RI", request.getRequestId());
-				httpPost.setHeader("X-M2M-Origin", prop.getAeId());
-				httpPost.setEntity(new StringEntity(request.getContent().toString(), StandardCharsets.UTF_8));
+				httpPost.setEntity(new StringEntity(cin.toJson(), StandardCharsets.UTF_8));
+				httpPost.addHeader("Content-Type", "application/vnd.onem2m-res+json; ty=4");
+				httpPost.addHeader("Accept", "application/vnd.onem2m-res+json");
+				httpPost.addHeader("X-M2M-RI", request.getRequestId());
+				httpPost.addHeader("X-M2M-Origin", prop.getAeId());
+				httpPost.addHeader("Authorization", prop.getAeAuthToken());
 				
 				try {
-					httpclient.execute(httpPost);
+					CloseableHttpResponse response = httpclient.execute(httpPost);
+					logger.info("Request is forwarded to UIoT. Result [{}] ", response.getStatusLine().toString());
 				} catch (ClientProtocolException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();

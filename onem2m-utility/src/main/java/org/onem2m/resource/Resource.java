@@ -41,6 +41,12 @@ public abstract class Resource {
 	@JsonIgnore
 	public abstract ResourceType getResourceType();
 
+	@JsonProperty("ty")
+	public Integer getResourceTypeValue() {
+		return this.getResourceType().getValue();
+	}
+	
+	
 	@JsonProperty("ri")
 	private String resourceID;
 

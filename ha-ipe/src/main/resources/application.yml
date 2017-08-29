@@ -9,8 +9,8 @@ cse_broker_urls:
 # ADN-AEのAE-ID
 ae_id: C55DED47A-0aee7e29
 
-# ADN-AEのパスワード
-ae_password: EODFOSKGOR
+# ADN-AEのauthorization token
+ae_auth_token: QzU1REVENDdBLTBhZWU3ZTI5OkVPREZPU0tHT1I=
 
 # UIoT PF DAVのホスト名(IP)
 dav_hostname: sp-uiot.japaneast.cloudapp.azure.com
