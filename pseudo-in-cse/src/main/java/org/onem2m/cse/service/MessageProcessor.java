@@ -96,7 +96,7 @@ public class MessageProcessor implements MqttMessageProcessable {
 			// TODO: ここから下が読みづらい。要リファクタリング。
 			String eventTypeId = null;
 			switch (to) {
-			case "/IN-CSE/ADN-AE/motionSensorData":
+			case "/HPE_IoT/hgw01/motionSensorData":
 				switch (cinContent) {
 				case "1":
 					eventTypeId = "1";
@@ -114,7 +114,7 @@ public class MessageProcessor implements MqttMessageProcessable {
 				}
 				break;
 				
-			case "/IN-CSE/ADN-AE/environmentalData":
+			case "/HPE_IoT/hgw01/environmentalData":
 				HomeStatus environmentalData = null;
 				try {
 					environmentalData = new ObjectMapper().readValue(cinContent, HomeStatus.class);
