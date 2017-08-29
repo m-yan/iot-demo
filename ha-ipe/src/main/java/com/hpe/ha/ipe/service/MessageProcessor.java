@@ -104,7 +104,7 @@ public class MessageProcessor implements MqttMessageProcessable {
 			
 			URI fowardingURL = null;
 			try {
-				fowardingURL = new URIBuilder().setHost(prop.getDavHostname()).setPort(prop.getDavPort()).setPath(request.getTo()).build();
+				fowardingURL = new URIBuilder().setScheme("http").setHost(prop.getDavHostname()).setPort(prop.getDavPort()).setPath(request.getTo()).build();
 			} catch (URISyntaxException e1) {
 				e1.printStackTrace();
 			}
