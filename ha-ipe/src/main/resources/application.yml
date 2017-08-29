@@ -1,3 +1,7 @@
+
+server:
+  port: 8090
+
 # IN-CSEが提供するMQTTブローカーの接続URL
 cse_broker_urls: 
   - tcp://localhost:1883
