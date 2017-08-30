@@ -1,19 +1,8 @@
 package com.hpe.ha.ipe.service;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.onem2m.mca.mqtt.RequestPrimitive;
 import org.onem2m.mca.mqtt.client.MqttMessageProcessable;
 import org.onem2m.resource.ContentInstance;
@@ -23,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
-import com.hpe.ha.ipe.util.ApplicationProperties;
 
 @Service
 public class MessageProcessor implements MqttMessageProcessable {
@@ -35,7 +23,7 @@ public class MessageProcessor implements MqttMessageProcessable {
 	private ApplicationContext context;
 
 	@Autowired
-	private ApplicationProperties prop;
+	private UIoTClientService uiotClient;
 
 	@Override
 	public boolean process(String topic, int id, int qos, byte[] payload) {
@@ -85,46 +73,21 @@ public class MessageProcessor implements MqttMessageProcessable {
 				return;
 			}
 
+			uiotClient.sendRequest(to, cin.toJson());
 			
-			URI fowardingURL = null;
-			try {
-				fowardingURL = new URIBuilder().setScheme("http").setHost(prop.getDavHostname()).setPort(prop.getDavPort()).setPath(request.getTo()).build();
-			} catch (URISyntaxException e1) {
-				e1.printStackTrace();
-			}
-			
-			CloseableHttpClient httpclient = HttpClients.createDefault();
-			
-			try {
-				new HttpPost();
-				HttpPost httpPost = new HttpPost(fowardingURL);
-				httpPost.setEntity(new StringEntity(cin.toJson(), StandardCharsets.UTF_8));
-				httpPost.addHeader("Content-Type", "application/vnd.onem2m-res+json; ty=4");
-				httpPost.addHeader("Accept", "application/vnd.onem2m-res+json");
-				httpPost.addHeader("X-M2M-RI", request.getRequestId());
-				httpPost.addHeader("X-M2M-Origin", prop.getAeId());
-				httpPost.addHeader("Authorization", prop.getAeAuthToken());
-				
-				try {
-					CloseableHttpResponse response = httpclient.execute(httpPost);
-					logger.info("Request is forwarded to UIoT. Result [{}] ", response.getStatusLine().toString());
-				} catch (ClientProtocolException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+			if (to.contains("motionSensorData")) {
+				ContentInstance eventLog = null;
+				switch(cin.getContent()) {
+				case "0":
+					eventLog = new ContentInstance("誰もいなくなりました。");
+					break;
+				case "1":
+					eventLog = new ContentInstance("誰かが来ました。");
+					break;
 				}
-
-			} finally {
-				try {
-					httpclient.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+				eventLog.setContentInfo("text/plain:0");
+				uiotClient.sendRequest("/HPE_IoT/hgw01/default/", eventLog.toJson());
 			}
-			
 		}
 
 		private String encodeToString(byte[] byte_array) {
