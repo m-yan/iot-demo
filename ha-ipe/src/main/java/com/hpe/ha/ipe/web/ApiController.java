@@ -58,6 +58,15 @@ public class ApiController {
 	@ResponseStatus(HttpStatus.OK)
 	HomeStatus setMonitoringMode(@RequestBody HomeStatus status) {
 		status.setId("12345678");
+		ContentInstance eventLog = null;
+		if (status.isMonitoringMode()) {
+			eventLog = new ContentInstance("自宅監視を開始しました。");
+		} else {
+			eventLog = new ContentInstance("自宅監視を終了しました。");
+		}
+		eventLog.setContentInfo("text/plain:0");
+		uiotClient.sendRequest("/HPE_IoT/hgw01/default/", eventLog.toJson());	
+		
 		return homeStatusService.update(status);
 	}
 
