@@ -25,6 +25,9 @@ public class MessageProcessor implements MqttMessageProcessable {
 	@Autowired
 	private UIoTClientService uiotClient;
 
+	@Autowired
+	private EventLogService eventLogger;
+	
 	@Override
 	public boolean process(String topic, int id, int qos, byte[] payload) {
 		Request request = (Request) context.getBean(Request.class);
@@ -76,17 +79,14 @@ public class MessageProcessor implements MqttMessageProcessable {
 			uiotClient.sendRequest(to, cin.toJson());
 			
 			if (to.contains("motionSensorData")) {
-				ContentInstance eventLog = null;
 				switch(cin.getContent()) {
 				case "0":
-					eventLog = new ContentInstance("誰もいなくなりました。");
+					eventLogger.writeLog("誰もいなくなりました。");
 					break;
 				case "1":
-					eventLog = new ContentInstance("誰かが来ました。");
+					eventLogger.writeLog("誰かが来ました。");
 					break;
 				}
-				eventLog.setContentInfo("text/plain:0");
-				uiotClient.sendRequest("/HPE_IoT/hgw01/default/", eventLog.toJson());
 			}
 		}
 
