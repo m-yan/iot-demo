@@ -21,9 +21,9 @@ public class WebSocketConfig implements WebSocketConfigurer {
 	
 	@Override
 	public void registerWebSocketHandlers(WebSocketHandlerRegistry registory) {
-		registory.addHandler(serverPushBroker, prop.getWsEnvironmentalInfo());
-		registory.addHandler(serverPushBroker, prop.getWsMonitoringMode());
-		registory.addHandler(serverPushBroker, prop.getWsEvents());
+		registory.addHandler(serverPushBroker, prop.getWsEnvironmentalInfo()).setAllowedOrigins("*");
+		registory.addHandler(serverPushBroker, prop.getWsMonitoringMode()).setAllowedOrigins("*");
+		registory.addHandler(serverPushBroker, prop.getWsEvents()).setAllowedOrigins("*");
 	}
 
 }
