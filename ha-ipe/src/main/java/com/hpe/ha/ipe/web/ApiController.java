@@ -134,7 +134,7 @@ public class ApiController {
 		
 		for (Entry<String, WebSocketSession> entry : sessions.entrySet()) {
 			try {
-				entry.getValue().sendMessage(new TextMessage(body));
+				entry.getValue().sendMessage(new TextMessage(notifiedCin.toJson()));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();

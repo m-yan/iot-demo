@@ -18,8 +18,14 @@ dav_hostname: sp-uiot.japaneast.cloudapp.azure.com
 # UIoT PF DAVのポート番号
 dav_port: 8180
 
+# EnvironmentalInfoPanelの更新通知用のWebSocketのパス
+ws_environmental_info: /ws/environmental_info
 
+# MonitoringPanelの更新通知用のWebSocketのパス
+ws_monitoring_mode: /ws/monitoring_mode
 
+# EventLogPanelの更新通知用のWebSocketのパス
+ws_events: /ws/events
 
 
 

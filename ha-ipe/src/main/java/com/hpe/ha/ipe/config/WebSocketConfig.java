@@ -6,6 +6,7 @@ import org.springframework.web.socket.config.annotation.EnableWebSocket;
 import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
 import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
 
+import com.hpe.ha.ipe.util.ApplicationProperties;
 import com.hpe.ha.ipe.web.ServerPushBroker;
 
 @Configuration
@@ -15,12 +16,14 @@ public class WebSocketConfig implements WebSocketConfigurer {
 	@Autowired
 	ServerPushBroker serverPushBroker;
 	
+	@Autowired
+	ApplicationProperties prop;
+	
 	@Override
 	public void registerWebSocketHandlers(WebSocketHandlerRegistry registory) {
-		// TODO Auto-generated method stub
-		registory.addHandler(serverPushBroker, "/monitorng_mode");
-		registory.addHandler(serverPushBroker, "/environmental_info");
-		registory.addHandler(serverPushBroker, "/events");
+		registory.addHandler(serverPushBroker, prop.getWsEnvironmentalInfo());
+		registory.addHandler(serverPushBroker, prop.getWsMonitoringMode());
+		registory.addHandler(serverPushBroker, prop.getWsEvents());
 	}
 
 }

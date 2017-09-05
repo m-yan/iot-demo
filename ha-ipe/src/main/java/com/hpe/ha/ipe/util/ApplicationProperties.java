@@ -19,4 +19,7 @@ public class ApplicationProperties {
 	private String irCommandsContainerUri;
 	private String davHostname;
 	private Integer davPort;
+	private String wsEnvironmentalInfo;
+	private String wsMonitoringMode;
+	private String wsEvents;
 }
