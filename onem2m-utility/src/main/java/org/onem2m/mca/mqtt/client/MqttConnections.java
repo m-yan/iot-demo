@@ -27,11 +27,10 @@ public final class MqttConnections {
 		MqttConnection connection = connectionList.get(mqttBrokerURL);
 		if (connection == null) {
 			if (mqttBrokerURL.contains("ssl")) {
-				connection = new TlsMqttConnection(mqttBrokerURL);
+//				connection = new TlsMqttConnection(mqttBrokerURL);
 			} else {
 				connection = new PlainMqttConnection(mqttBrokerURL);
 			}
-
 			connectionList.put(mqttBrokerURL, connection);
 		}
 		return connection;
