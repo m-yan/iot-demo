@@ -21,12 +21,12 @@ public class IPE {
 	@PostConstruct
 	public void init() {
 		logger.info("Init process started.");
-		mqttConnectionManager.connectAll();
+		mqttConnectionManager.connect();
 	}
 
 	@PreDestroy
 	public void exit() {
-		mqttConnectionManager.closeAll();
+		mqttConnectionManager.close();
 		logger.info("Exit process finished.");
 	}
 

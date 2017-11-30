@@ -24,9 +24,6 @@ public class MessageProcessor implements MqttMessageProcessable {
 
 	@Autowired
 	private UIoTClientService uiotClient;
-
-	@Autowired
-	private EventLogService eventLogger;
 	
 	@Override
 	public boolean process(String topic, int id, int qos, byte[] payload) {
@@ -77,17 +74,7 @@ public class MessageProcessor implements MqttMessageProcessable {
 			}
 
 			uiotClient.sendRequest(to, cin.toJson());
-			
-			if (to.contains("motionSensorData")) {
-				switch(cin.getContent()) {
-				case "0":
-					eventLogger.writeLog("誰もいなくなりました。");
-					break;
-				case "1":
-					eventLogger.writeLog("誰かが来ました。");
-					break;
-				}
-			}
+
 		}
 
 		private String encodeToString(byte[] byte_array) {

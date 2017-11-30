@@ -1,35 +1,17 @@
-
 server:
   port: 8090
 
 # IN-CSEが提供するMQTTブローカーの接続URL
-cse_broker_urls: 
-  - tcp://localhost:1883
+cse_broker_url: tcp://localhost:1883
 
 # ADN-AEのAE-ID
-ae_id: C55DED47A-0aee7e29
+ae_id: C857CD7D3-265ad3e6
 
 # ADN-AEのauthorization token
-ae_auth_token: QzU1REVENDdBLTBhZWU3ZTI5OkVPREZPU0tHT1I=
+ae_auth_token: Qzg1N0NEN0QzLTI2NWFkM2U2OlJLV0dQVEZQUlA=
 
 # UIoT PF DAVのホスト名(IP)
-dav_hostname: sp-uiot.japaneast.cloudapp.azure.com
+dav_hostname: 10.0.0.12
 
 # UIoT PF DAVのポート番号
-dav_port: 8180
-
-# EnvironmentalInfoPanelの更新通知用のWebSocketのパス
-ws_environmental_info: /ws/environmental_info
-
-# MonitoringPanelの更新通知用のWebSocketのパス
-ws_monitoring_mode: /ws/monitoring_mode
-
-# EventLogPanelの更新通知用のWebSocketのパス
-ws_events: /ws/events
-
-
-
-spring.datasource.driver-class-name: net.sf.log4jdbc.DriverSpy
-spring.datasource.url: jdbc:log4jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
-logging.level.jdbc: OFF
-logging.level.jdbc.sqltiming: DEBUG
+dav_port: 8080

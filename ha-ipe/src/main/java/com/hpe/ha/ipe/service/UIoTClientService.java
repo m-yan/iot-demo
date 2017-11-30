@@ -59,19 +59,16 @@ public class UIoTClientService {
 				CloseableHttpResponse response = httpclient.execute(httpPost);
 				logger.info("Request is sended to UIoT. Result [{}] ", response.getStatusLine().toString());
 			} catch (ClientProtocolException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage(),e);
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage(),e);
 			}
 
 		} finally {
 			try {
 				httpclient.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.error(e.getMessage(),e);
 			}
 		}
 	}
