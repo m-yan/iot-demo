@@ -24,13 +24,13 @@ public class IRemoconController {
 	@Autowired
 	private ApplicationProperties prop;
 	
-	public void sendInfrared(int infraredId) {
-		String command = String.format("*is;%d", infraredId);
+	public void sendInfrared(String infraredId) {
+		String command = new StringBuilder().append("*is;").append(infraredId).toString();
 		this.sendRequest(this.createRequest(command));
 	}
 	
-	public void learnInfrared(int infraredId) {
-		String command = String.format("*ic;%d", infraredId);
+	public void learnInfrared(String infraredId) {
+		String command = new StringBuilder().append("*ic;").append(infraredId).toString();
 		this.sendRequest(this.createRequest(command));
 	}
 	

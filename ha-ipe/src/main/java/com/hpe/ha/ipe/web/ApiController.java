@@ -44,9 +44,7 @@ public class ApiController {
 			return ResponseEntity.badRequest().header("X-M2M-RI", requestId).header("X-M2M-RSC", "4000").body(null);
 		}
 
-		Integer infraredId = Integer.valueOf(notifiedCin.getContent());
-
-		iRemoconCtl.sendInfrared(infraredId);
+		iRemoconCtl.sendInfrared(notifiedCin.getContent());
 		
 		return ResponseEntity.ok().header("X-M2M-RI", requestId).header("X-M2M-RSC", "2000").body(null);
 	}
