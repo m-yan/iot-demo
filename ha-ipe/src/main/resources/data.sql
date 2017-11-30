@@ -1,1 +1,0 @@
-INSERT INTO home_status(id, monitoring_mode) VALUES('12345678', false);
