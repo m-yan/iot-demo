@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import org.apache.commons.lang.RandomStringUtils;
 import org.onem2m.mca.complexdatatype.FilterCriteria;
+import org.onem2m.mca.complexdatatype.Notification;
 import org.onem2m.resource.Resource;
 import org.onem2m.resource.Resource.ResourceType;
 import org.slf4j.Logger;
@@ -121,7 +122,7 @@ public final class RequestPrimitive extends Primitive {
 	 * @param from		送信元のIN-AE-ID
 	 * @return			RETRIEVE Request
 	 */
-	public static <T extends Resource> RequestPrimitive newRetrieveRequest(String to, String from) {
+	public static RequestPrimitive newRetrieveRequest(String to, String from) {
 		return new RequestPrimitive(Operation.RETRIEVE, to, from, null);
 	}
 	
@@ -142,8 +143,26 @@ public final class RequestPrimitive extends Primitive {
 	 * @param from		送信元のIN-AE-ID
 	 * @return			DELETE Request
 	 */
-	public static <T extends Resource> RequestPrimitive newDeleteRequest(String to, String from) {
+	public static RequestPrimitive newDeleteRequest(String to, String from) {
 		return new RequestPrimitive(Operation.DELETE, to, from, null);
+	}
+	
+	/**
+	 * DELETE Requestを生成するstaticファクトリメソッド
+	 * @param to		削除対象のリソースのURI
+	 * @param from		送信元のIN-AE-ID
+	 * @return			DELETE Request
+	 */
+	public static RequestPrimitive newNotifyRequest(String to, String from, Notification notification) {
+		RequestPrimitive request = new RequestPrimitive(Operation.NOTIFY, to, from, null);
+		if (notification != null) {
+			try {
+				request.setContent(mapper.readValue(notification.toJson(), Object.class));
+			} catch (IOException e) {
+				logger.warn("Received Resource does not conform to the terms of oneM2M.");
+			}
+		}
+		return request;
 	}
 	
 	/**

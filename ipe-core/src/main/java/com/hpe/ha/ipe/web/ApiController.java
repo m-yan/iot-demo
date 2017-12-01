@@ -65,8 +65,8 @@ public class ApiController {
 			return ResponseEntity.badRequest().header("X-M2M-RI", requestId).header("X-M2M-RSC", "4000").body(null);
 		}
 
-		String topic = TopicReference.generateTopicForRequest(prop.getInCseId(), receiver);
-		RequestPrimitive request = RequestPrimitive.newCreateRequest(prop.getInCseId() + "/" + receiver, prop.getInCseId(), notifiedCin);
+		String topic = TopicReference.generateTopicForRequest(prop.getInCseId(), receiver);		
+		RequestPrimitive request = RequestPrimitive.newNotifyRequest(prop.getInCseId() + "/" + receiver, prop.getInCseId(), notification);
 		
 		if (mqttPublisher.sendMessage(topic, request.toJson())) {
 			return ResponseEntity.ok().header("X-M2M-RI", requestId).header("X-M2M-RSC", "2000").body(null);

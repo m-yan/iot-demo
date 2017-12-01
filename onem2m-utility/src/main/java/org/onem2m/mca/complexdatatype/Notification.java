@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonRootName;
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -55,6 +56,15 @@ public class Notification {
 			logger.warn(e.getMessage());
 			return null;
 		} catch (IOException e) {
+			logger.error(e.getMessage(), e);
+			return null;
+		}
+	}
+	
+	public String toJson() {
+		try {
+			return mapper.writeValueAsString(this);
+		} catch (JsonProcessingException e) {
 			logger.error(e.getMessage(), e);
 			return null;
 		}
