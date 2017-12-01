@@ -35,10 +35,11 @@ public class IRemoconController {
 	}
 		
 	private void sendIRemoconCommand(String target, String command) {
-		ContentInstance cin = new ContentInstance(command);
-		String from = prop.getInCseId();
 		String to = new StringBuilder().append(prop.getInCseId()).append("/").append(target).append("/container").toString();
-		String request = RequestPrimitive.newCreateRequest(from, to, cin).toJson();
+		String from = prop.getInCseId();
+		ContentInstance primitiveContent = new ContentInstance(command);
+
+		String request = RequestPrimitive.newCreateRequest(to, from, primitiveContent).toJson();
 		
 		String topic = TopicReference.getTopicForRequest(prop.getInCseId(), target);
 		byte[] payload = request.getBytes();
