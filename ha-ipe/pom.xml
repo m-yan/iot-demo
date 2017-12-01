@@ -9,7 +9,7 @@
 	<packaging>war</packaging>
 
 	<name>ipe</name>
-	<description>IPE for Home Automation Demo</description>
+	<description>IPE running between ADN-AE and IN-CSE. This converts between MQTT and HTTP mutually.</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>

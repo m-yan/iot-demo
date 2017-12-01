@@ -1,4 +1,4 @@
-package org.onem2m.mca.datatype;
+package org.onem2m.mca.complexdatatype;
 
 import java.util.List;
 import com.fasterxml.jackson.annotation.JsonProperty;

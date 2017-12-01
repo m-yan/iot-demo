@@ -21,12 +21,12 @@ public class MqttConnectionManager {
 	private ApplicationProperties prop;
 
 	@Autowired
-	private MessageProcessor messageProcessor;
+	private MqttSubscriber messageProcessor;
 	
 	public void connect() {
 		String brokerURL = prop.getCseBrokerUrl();
 			mqttConnection = MqttConnections.getConnectionTo(brokerURL);
-			String topic = TopicReference.getTopicForRequest("+", prop.getInCseId());
+			String topic = TopicReference.generateTopicForRequest("+", prop.getInCseId());
 
 			try {
 				if (!mqttConnection.isConnected()) {

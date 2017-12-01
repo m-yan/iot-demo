@@ -29,7 +29,7 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class Resource {
 	
-	private static final Logger logger = LoggerFactory.getLogger(Resource.class);
+	protected static final Logger logger = LoggerFactory.getLogger(Resource.class);
 
 	protected static final ObjectMapper mapper = new ObjectMapper();	
 	static {
@@ -87,6 +87,17 @@ public abstract class Resource {
 	private List<Object> childResource;	
 
 
+	/**
+	 * @return インスタンスをJSONシリアライズした文字列を返す。何らかの理由でにJSONシリアライズに失敗した場合はnullを返す。
+	 */
+	public String toJson() {
+		try {
+			return mapper.writeValueAsString(this);
+		} catch (JsonProcessingException e) {
+			logger.error(e.getMessage(), e);
+			return null;
+		}
+	}
 	
 	/**
 	 * JSONシリアライズされたResourceをparseしてインスタンスを生成するスタティックファクトリメソッド
@@ -96,7 +107,7 @@ public abstract class Resource {
 	 * @return jsonResourceをparseして得たインスタンスを返す。
 	 *         jsonResourceが不正などでparseに失敗した場合はnullを返す。
 	 */
-	public static <T extends Resource> T valueOf(String jsonResource, Class<T> type) {
+	public static <T extends Resource> T parse(String jsonResource, Class<T> type) {
 		try {
 			return mapper.readValue(jsonResource, type);
 		} catch (JsonParseException e) {
@@ -107,18 +118,6 @@ public abstract class Resource {
 			logger.warn(e.getMessage());
 			return null;
 		} catch (IOException e) {
-			logger.error(e.getMessage(), e);
-			return null;
-		}
-	}
-
-	/**
-	 * @return インスタンスをJSONシリアライズした文字列を返す。何らかの理由でにJSONシリアライズに失敗した場合はnullを返す。
-	 */
-	public String toJson() {
-		try {
-			return mapper.writeValueAsString(this);
-		} catch (JsonProcessingException e) {
 			logger.error(e.getMessage(), e);
 			return null;
 		}

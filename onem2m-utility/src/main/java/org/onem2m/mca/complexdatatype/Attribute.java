@@ -1,4 +1,4 @@
-package org.onem2m.mca.datatype;
+package org.onem2m.mca.complexdatatype;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

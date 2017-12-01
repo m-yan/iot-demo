@@ -1,7 +1,12 @@
 package org.onem2m.resource;
 
+import java.io.IOException;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonRootName;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -39,5 +44,20 @@ public class ContentInstance extends Resource {
 		this.content = content;
 	}
 
+	public static ContentInstance parse(String jsonResource) {
+		try {
+			return mapper.readValue(jsonResource, ContentInstance.class);
+		} catch (JsonParseException e) {
+			logger.warn("Received JSON format is invalid.");
+			return null;
+		} catch (JsonMappingException e) {
+			logger.warn("Received Resource does not conform to the terms of oneM2M.");
+			logger.warn(e.getMessage());
+			return null;
+		} catch (IOException e) {
+			logger.error(e.getMessage(), e);
+			return null;
+		}
+	}
 	
 }

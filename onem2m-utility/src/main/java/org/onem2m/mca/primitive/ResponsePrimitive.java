@@ -1,9 +1,9 @@
-package org.onem2m.mca.mqtt;
+package org.onem2m.mca.primitive;
 
 import java.io.IOException;
 import java.util.Map;
 
-import org.onem2m.mca.datatype.URIList;
+import org.onem2m.mca.complexdatatype.URIList;
 import org.onem2m.resource.Resource;
 import org.onem2m.resource.Resource.ResourceType;
 import org.slf4j.Logger;
@@ -59,7 +59,7 @@ public final class ResponsePrimitive extends Primitive {
 	 * @return jsonResponseをparseして得たインスタンスを返す。
 	 *         jsonResponseが不正などでparseに失敗した場合はnullを返す。
 	 */
-	public static ResponsePrimitive valueOf(String jsonResponse) {
+	public static ResponsePrimitive parse(String jsonResponse) {
 		try {
 			return mapper.readValue(jsonResponse, ResponsePrimitive.class);
 		} catch (JsonParseException e) {
@@ -104,7 +104,7 @@ public final class ResponsePrimitive extends Primitive {
 	public <T extends Resource> T getContentCastedBy(Class<T> type) {
 		try {
 			String jsonPrimitiveContent = mapper.writeValueAsString(this.content);
-			return Resource.valueOf(jsonPrimitiveContent, type);
+			return Resource.parse(jsonPrimitiveContent, type);
 		} catch (JsonProcessingException e) {
 			logger.warn("Failed to cast to the specified type.");
 		}

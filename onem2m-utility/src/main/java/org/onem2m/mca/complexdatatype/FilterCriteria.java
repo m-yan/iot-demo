@@ -1,6 +1,6 @@
-package org.onem2m.mca.datatype;
+package org.onem2m.mca.complexdatatype;
 
-import org.onem2m.mca.mqtt.Primitive.FilterUsage;
+import org.onem2m.mca.primitive.Primitive.FilterUsage;
 import org.onem2m.resource.Resource.ResourceType;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

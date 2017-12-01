@@ -1,11 +1,11 @@
-package org.onem2m.mca.mqtt;
+package org.onem2m.mca.primitive;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import org.apache.commons.lang.RandomStringUtils;
-import org.onem2m.mca.datatype.FilterCriteria;
+import org.onem2m.mca.complexdatatype.FilterCriteria;
 import org.onem2m.resource.Resource;
 import org.onem2m.resource.Resource.ResourceType;
 import org.slf4j.Logger;
@@ -154,7 +154,7 @@ public final class RequestPrimitive extends Primitive {
 	 * @return jsonRequestをparseして得たインスタンスを返す。
 	 *         jsonRequestが不正などでparseに失敗した場合はnullを返す。
 	 */
-	public static RequestPrimitive valueOf(String jsonRequest) {
+	public static RequestPrimitive parse(String jsonRequest) {
 		try {
 			return mapper.readValue(jsonRequest, RequestPrimitive.class);
 		} catch (JsonParseException e) {
@@ -198,7 +198,7 @@ public final class RequestPrimitive extends Primitive {
 	public <T extends Resource> T getContentCastedBy(Class<T> type) {
 		try {
 			String jsonPrimitiveContent = mapper.writeValueAsString(this.content);
-			return Resource.valueOf(jsonPrimitiveContent, type);
+			return Resource.parse(jsonPrimitiveContent, type);
 		} catch (JsonProcessingException e) {
 			logger.warn("Failed to cast to the specified type.");
 		}

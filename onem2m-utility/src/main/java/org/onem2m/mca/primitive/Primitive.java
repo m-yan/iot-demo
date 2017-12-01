@@ -1,4 +1,4 @@
-package org.onem2m.mca.mqtt;
+package org.onem2m.mca.primitive;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
