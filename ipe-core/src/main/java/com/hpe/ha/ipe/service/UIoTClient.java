@@ -56,8 +56,8 @@ public class UIoTClient {
 				
 				Integer responseStatusCode = Integer.valueOf(response.getLastHeader("x-m2m-rsc").getValue());
 				String requestId = response.getLastHeader("x-m2m-ri").getValue();
-				Object content = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
-				
+				String responseBody = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
+				Object content = new ObjectMapper().readValue(responseBody, Object.class);
 				return new ResponsePrimitive(responseStatusCode, requestId, content);
 			} catch (ClientProtocolException e) {
 				logger.error(e.getMessage(), e);
