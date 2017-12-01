@@ -11,6 +11,7 @@ import lombok.Setter;
 @Setter
 public class ApplicationProperties {
 	private String cseBrokerUrl;
+	private String inCseId;
 	private String aeId;
 	private String aeAuthToken;
 	private String davHostname;

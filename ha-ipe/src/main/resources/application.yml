@@ -4,10 +4,13 @@ server:
 # IN-CSEが提供するMQTTブローカーの接続URL
 cse_broker_url: tcp://localhost:1883
 
-# ADN-AEのAE-ID
+# UIoT PFのIN-CSE-ID
+in_cse_id: HPE_IoT
+
+# 本アプリケーション(IPE)のAE-ID
 ae_id: C857CD7D3-265ad3e6
 
-# ADN-AEのauthorization token
+# 本アプリケーション(IPE)向けにUIoT PFから払い出されたauthorization token
 ae_auth_token: Qzg1N0NEN0QzLTI2NWFkM2U2OlJLV0dQVEZQUlA=
 
 # UIoT PF DAVのホスト名(IP)

@@ -1,6 +1,9 @@
 package com.hpe.ha.ipe.web;
 
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.onem2m.resource.ContentInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +20,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.hpe.ha.ipe.service.IRemoconController;
+import com.hpe.ha.ipe.util.ApplicationProperties;
 import com.hpe.ha.ipe.valueobject.Notification;
 import org.springframework.http.ResponseEntity;
 
@@ -32,19 +36,29 @@ public class ApiController {
 		mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
 		mapper.enable(DeserializationFeature.UNWRAP_ROOT_VALUE);
 	}
+
+	@Autowired
+	private ApplicationProperties prop;
 	
 	@Autowired
 	private IRemoconController iRemoconCtl;
 	
 	@PostMapping("send_iremocon_command")
 	ResponseEntity<String> sendIRemoconCommand(@RequestBody String body, @RequestHeader("X-M2M-RI") String requestId) {
+		logger.info("HTTP Request received. body: [{}]", body);
+
 		ContentInstance notifiedCin = this.parseNotificaitonAndExtractContentInstance(body);
 		
-		if (notifiedCin == null) {
+		if (notifiedCin == null || notifiedCin.getParentID() == null || notifiedCin.getContent() == null) {
 			return ResponseEntity.badRequest().header("X-M2M-RI", requestId).header("X-M2M-RSC", "4000").body(null);
 		}
-
-		iRemoconCtl.sendInfrared(notifiedCin.getContent());
+		
+		String target = this.extractTarget(notifiedCin.getParentID());
+		if (target == null) {
+			return ResponseEntity.badRequest().header("X-M2M-RI", requestId).header("X-M2M-RSC", "4000").body(null);
+		}
+		
+		iRemoconCtl.sendInfrared(target, notifiedCin.getContent());
 		
 		return ResponseEntity.ok().header("X-M2M-RI", requestId).header("X-M2M-RSC", "2000").body(null);
 	}
@@ -63,5 +77,16 @@ public class ApiController {
 				logger.error(e.getMessage(), e);
 			}
 		 return cin;
+	}
+	
+	private String extractTarget(String parentId) {
+		String regex = new StringBuilder().append(prop.getInCseId()).append("/()/iRemoconCommands").toString();
+		Pattern pattern = Pattern.compile(regex);
+		Matcher matcher = pattern.matcher(parentId);
+		if (matcher.find()) {
+			return matcher.group(1);
+		} else {
+			return null;
+		}
 	}
 }

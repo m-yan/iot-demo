@@ -24,25 +24,24 @@ public class IRemoconController {
 	@Autowired
 	private ApplicationProperties prop;
 	
-	public void sendInfrared(String infraredId) {
+	public void sendInfrared(String target, String infraredId) {
 		String command = new StringBuilder().append("*is;").append(infraredId).toString();
-		this.sendRequest(this.createRequest(command));
+		this.sendIRemoconCommand(target, command);
 	}
 	
-	public void learnInfrared(String infraredId) {
+	public void learnInfrared(String target, String infraredId) {
 		String command = new StringBuilder().append("*ic;").append(infraredId).toString();
-		this.sendRequest(this.createRequest(command));
+		this.sendIRemoconCommand(target, command);
 	}
-	
-	private String createRequest(String command) {
+		
+	private void sendIRemoconCommand(String target, String command) {
 		ContentInstance cin = new ContentInstance(command);
-		RequestPrimitive request = RequestPrimitive.newCreateRequest("HPE_IoT/ADN-AE", "HPE_IoT", cin);
-		return request.toJson();
-	}
-	
-	private void sendRequest(String request) {
-		String topic = TopicReference.getTopicForRequestFromCseTo(prop.getAeId());
-		byte[] payload = request.getBytes();
+		String from = prop.getInCseId();
+		String to = new StringBuilder().append(prop.getInCseId()).append("/").append(target).append("/container").toString();
+		RequestPrimitive request = RequestPrimitive.newCreateRequest(from, to, cin);
+		
+		String topic = TopicReference.getTopicForRequest(prop.getInCseId(), target);
+		byte[] payload = request.toJson().getBytes();
 		MqttConnection mqttConnection = mqttConnectionManager.getConnection();
 		try {
 			mqttConnection.publish(topic, payload);

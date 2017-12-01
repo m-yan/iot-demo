@@ -26,7 +26,7 @@ public class MqttConnectionManager {
 	public void connect() {
 		String brokerURL = prop.getCseBrokerUrl();
 			mqttConnection = MqttConnections.getConnectionTo(brokerURL);
-			String topic = TopicReference.getTopicForRequestToCseFrom(prop.getAeId());
+			String topic = TopicReference.getTopicForRequest("+", prop.getInCseId());
 
 			try {
 				if (!mqttConnection.isConnected()) {
