@@ -4,6 +4,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.onem2m.mca.complexdatatype.Notification;
 import org.onem2m.mca.mqtt.TopicReference;
+import org.onem2m.mca.primitive.RequestPrimitive;
 import org.onem2m.resource.ContentInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +29,7 @@ public class ApiController {
 
 	private static final Logger logger = LoggerFactory.getLogger(ApiController.class);
 
-	private static final ObjectMapper mapper = new ObjectMapper();	
+	private static final ObjectMapper mapper = new ObjectMapper();
 	static {
 		mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 		mapper.enable(SerializationFeature.WRAP_ROOT_VALUE);
@@ -37,39 +38,41 @@ public class ApiController {
 
 	@Autowired
 	private ApplicationProperties prop;
-	
+
 	@Autowired
 	private MqttPublisher mqttPublisher;
-	
+
 	@PostMapping("notification/container-changes")
 	ResponseEntity<String> fowardNotification(@RequestBody String body, @RequestHeader("X-M2M-RI") String requestId) {
 		logger.info("HTTP Request received. body: [{}]", body);
 
 		Notification notification = Notification.parse(body);
 		String notifiedContent = notification.getNev().getRep();
-		if (notification == null || notifiedContent == null ) {
+		if (notification == null || notifiedContent == null) {
 			logger.warn("Received request is invalid.");
 			return ResponseEntity.badRequest().header("X-M2M-RI", requestId).header("X-M2M-RSC", "4000").body(null);
 		}
-		
+
 		ContentInstance notifiedCin = ContentInstance.parse(notifiedContent);
 		if (notifiedCin == null || notifiedCin.getParentID() == null || notifiedCin.getContent() == null) {
 			logger.warn("Received request is invalid.");
 			return ResponseEntity.badRequest().header("X-M2M-RI", requestId).header("X-M2M-RSC", "4000").body(null);
 		}
-		
+
 		String receiver = this.extractReceiver(notifiedCin.getParentID());
 		if (receiver == null) {
 			logger.warn("Received request is invalid.");
 			return ResponseEntity.badRequest().header("X-M2M-RI", requestId).header("X-M2M-RSC", "4000").body(null);
 		}
-		
+
 		String topic = TopicReference.generateTopicForRequest(prop.getInCseId(), receiver);
+		RequestPrimitive request = RequestPrimitive.newCreateRequest(prop.getInCseId() + "/" + receiver, prop.getInCseId(), notifiedCin);
 		
-		if (mqttPublisher.sendMessage(topic, notifiedCin.getContent())) {
+		if (mqttPublisher.sendMessage(topic, request.toJson())) {
 			return ResponseEntity.ok().header("X-M2M-RI", requestId).header("X-M2M-RSC", "2000").body(null);
 		} else {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).header("X-M2M-RI", requestId).header("X-M2M-RSC", "5000").body(null);
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).header("X-M2M-RI", requestId)
+					.header("X-M2M-RSC", "5000").body(null);
 		}
 	}
 
@@ -83,5 +86,5 @@ public class ApiController {
 			return null;
 		}
 	}
-	
+
 }
