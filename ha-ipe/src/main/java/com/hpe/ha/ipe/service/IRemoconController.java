@@ -38,10 +38,10 @@ public class IRemoconController {
 		ContentInstance cin = new ContentInstance(command);
 		String from = prop.getInCseId();
 		String to = new StringBuilder().append(prop.getInCseId()).append("/").append(target).append("/container").toString();
-		RequestPrimitive request = RequestPrimitive.newCreateRequest(from, to, cin);
+		String request = RequestPrimitive.newCreateRequest(from, to, cin).toJson();
 		
 		String topic = TopicReference.getTopicForRequest(prop.getInCseId(), target);
-		byte[] payload = request.toJson().getBytes();
+		byte[] payload = request.getBytes();
 		MqttConnection mqttConnection = mqttConnectionManager.getConnection();
 		try {
 			mqttConnection.publish(topic, payload);
