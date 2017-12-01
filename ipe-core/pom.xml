@@ -4,11 +4,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.hpe.ha</groupId>
-	<artifactId>ipe</artifactId>
+	<artifactId>ipe-core</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 
-	<name>ipe</name>
+	<name>ipe-core</name>
 	<description>IPE running between ADN-AE and IN-CSE. This converts between MQTT and HTTP mutually.</description>
 
 	<parent>

@@ -3,15 +3,15 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.onem2m</groupId>
-  <artifactId>iot-demo</artifactId>
+  <artifactId>ipe</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <name>iot-demo</name>
+  <name>ipe</name>
 
   <modules>
     <module>onem2m-utility</module>
-    <module>ha-ipe</module>
+    <module>ipe-core</module>
   </modules>
 
 </project>
