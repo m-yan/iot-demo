@@ -50,11 +50,13 @@ public class ApiController {
 		ContentInstance notifiedCin = this.parseNotificaitonAndExtractContentInstance(body);
 		
 		if (notifiedCin == null || notifiedCin.getParentID() == null || notifiedCin.getContent() == null) {
+			logger.warn("Received request is invalid.");
 			return ResponseEntity.badRequest().header("X-M2M-RI", requestId).header("X-M2M-RSC", "4000").body(null);
 		}
 		
 		String target = this.extractTarget(notifiedCin.getParentID());
 		if (target == null) {
+			logger.warn("Received request is invalid.");
 			return ResponseEntity.badRequest().header("X-M2M-RI", requestId).header("X-M2M-RSC", "4000").body(null);
 		}
 		
@@ -80,7 +82,7 @@ public class ApiController {
 	}
 	
 	private String extractTarget(String parentId) {
-		String regex = new StringBuilder().append(prop.getInCseId()).append("/()/iRemoconCommands").toString();
+		String regex = new StringBuilder().append(prop.getInCseId()).append("/(.*)/iRemoconCommands").toString();
 		Pattern pattern = Pattern.compile(regex);
 		Matcher matcher = pattern.matcher(parentId);
 		if (matcher.find()) {
