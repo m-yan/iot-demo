@@ -15,6 +15,7 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 import org.onem2m.mca.primitive.RequestPrimitive;
 import org.onem2m.mca.primitive.ResponsePrimitive;
 import org.onem2m.mca.primitive.Primitive.ResponseStatus;
@@ -55,7 +56,7 @@ public class UIoTClient {
 				
 				Integer responseStatusCode = Integer.valueOf(response.getLastHeader("x-m2m-rsc").getValue());
 				String requestId = response.getLastHeader("x-m2m-ri").getValue();
-				Object content = response.getEntity().getContent().toString();
+				Object content = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
 				
 				return new ResponsePrimitive(responseStatusCode, requestId, content);
 			} catch (ClientProtocolException e) {
