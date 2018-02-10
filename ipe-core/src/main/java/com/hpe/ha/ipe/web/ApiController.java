@@ -47,13 +47,13 @@ public class ApiController {
 		logger.info("HTTP Request received. body: [{}]", body);
 
 		Notification notification = Notification.parse(body);
-		String notifiedContent = notification.getNev().getRep();
-		if (notification == null || notifiedContent == null) {
+		if (notification == null ) {
 			logger.warn("Received request is invalid.");
 			return ResponseEntity.badRequest().header("X-M2M-RI", requestId).header("X-M2M-RSC", "4000").body(null);
 		}
+		
+		ContentInstance notifiedCin = notification.getNev().getRepresentationCastedBy(ContentInstance.class);
 
-		ContentInstance notifiedCin = ContentInstance.parse(notifiedContent);
 		if (notifiedCin == null || notifiedCin.getParentID() == null || notifiedCin.getContent() == null) {
 			logger.warn("Received request is invalid.");
 			return ResponseEntity.badRequest().header("X-M2M-RI", requestId).header("X-M2M-RSC", "4000").body(null);

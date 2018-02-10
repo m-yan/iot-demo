@@ -2,9 +2,11 @@ package org.onem2m.mca.complexdatatype;
 
 import java.io.IOException;
 
+import org.onem2m.resource.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonRootName;
@@ -42,7 +44,18 @@ public class Notification {
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public static class NotifcationEvent {
 		@NonNull
-		private String rep;
+		private Object rep;
+		
+		@JsonIgnore
+		public <T extends Resource> T getRepresentationCastedBy(Class<T> type) {
+			try {
+				String jsonRepresentation = new ObjectMapper().writeValueAsString(this.rep);
+				return Resource.parse(jsonRepresentation, type);
+			} catch (JsonProcessingException e) {
+				logger.warn("Failed to cast to the specified type.");
+			}
+			return null;
+		}
 	}
 	
 	public static Notification parse(String jsonResource) {
